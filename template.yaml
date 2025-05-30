@@ -93,7 +93,7 @@ Resources:
       CodeUri: ./lambdas/subtract
       Description: Subtract
       AutoPublishAlias: live
-
+  
   StateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
@@ -110,7 +110,7 @@ Resources:
   StateMachineRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub statemachine-role-${AWS::StackName}
+      # RoleName: !Sub statemachine-role-${AWS::StackName}
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
