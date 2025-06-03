@@ -43,4 +43,13 @@ def test_add():
         'result': 79
     }
     
-    assert(actual_response == expected_response)
+#    assert(actual_response == expected_response)
+    assert actual_response.get('first') == '1'
+    assert actual_response.get('second') == '20'
+    assert actual_response.get('third') == '3'
+    assert actual_response.get('result') == 79
+
+    assert 'metadata' in actual_response
+    assert 'timestamp' in actual_response['metadata']
+    assert 'region' in actual_response['metadata']
+    assert actual_response['metadata']['calculation_type'] == 'addition'
