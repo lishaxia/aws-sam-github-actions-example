@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 def lambda_handler(event, context):
-    print(event)
+    print("Function invoked with event:", event)
     # Get calculation parameters from input
     first = event['input']['first']
     second = event['input']['second']
