@@ -1,14 +1,11 @@
-name: Release Plan and Monitor
+name: Release Plan
 
 on:
   pull_request:
-    types: [opened, synchronize]  # trigger release plan
-  issue_comment:
-    types: [created]             # trigger monitor listening
+    types: [opened, synchronize]
 
 jobs:
   release-plan:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,39 +17,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Run Release Safety Agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
+          docker pull ${{ steps.login-ecr.outputs.registry }}/cloudsmith-release-safety-agent:latest
           docker run \
             -e GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN \
             -e GH_PR_URL=$GH_PR_URL \
             -v ~/.aws:/root/.aws:ro \
-            cloudsmith-release-safety-agent
-
-  monitor:
-    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && github.event.comment.body == '/monitor'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-
-      - name: Run Release Safety Agent with Monitor
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_PR_URL: ${{ github.event.issue.pull_request.html_url }}
-        run: |
-          docker run \
-            -e GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN \
-            -e GH_PR_URL=$GH_PR_URL \
-            -e COMMAND=monitor \
-            -v ~/.aws:/root/.aws:ro \
-            cloudsmith-release-safety-agent
+            ${{ steps.login-ecr.outputs.registry }}/cloudsmith-release-safety-agent:latest
 
