@@ -17,19 +17,3 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Run Release Safety Agent
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          docker pull ${{ steps.login-ecr.outputs.registry }}/cloudsmith-release-safety-agent:latest
-          docker run \
-            -e GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN \
-            -e GH_PR_URL=$GH_PR_URL \
-            -v ~/.aws:/root/.aws:ro \
-            ${{ steps.login-ecr.outputs.registry }}/cloudsmith-release-safety-agent:latest
-
