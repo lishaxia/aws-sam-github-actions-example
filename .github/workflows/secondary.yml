@@ -10,13 +10,17 @@ jobs:
       env-name: ${{ steps.env-name.outputs.environment }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies with Apt Get
+      
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install python3.8 jq -y
-      - name: Install Pip Dependencies
-        run: |
-          pip3 install pytest
+          python -m pip install --upgrade pip
+          pip install pytest aws-sam-cli jq
+
       - name: Configure AWS credentials
         id: creds
         uses: aws-actions/configure-aws-credentials@v1
@@ -25,9 +29,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.AWS_REGION }}
+
       - name: SAM Validate
         run: |
           sam validate
+
       - name: Configure variables
         shell: bash
         id: vars
@@ -49,9 +55,12 @@ jobs:
           echo "The region is $REGION"
           echo "The bucket_name is $BUCKET_NAME"
           echo "The branch is $BRANCH"
+
       - name: SAM Build
         run: |
           sam build
+
       - name: Run unit tests
         run: |
           python3 -m pytest -s -vvv ./tests/unit/
+
