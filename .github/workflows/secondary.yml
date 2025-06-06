@@ -11,13 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      # 替换原来的Python安装步骤，使用官方action
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
 
-      # 安装所需的依赖
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
