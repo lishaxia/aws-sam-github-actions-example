@@ -1,7 +1,7 @@
 # GitHub Actions SAM Deployment Example
 The purpose of this repository is to illustrate a GitHub Actions pipeline deploying a SAM template.
 
-In this particular example we are deploying Amazon API Gateway, AWS StateMachine, AWS Lambda Functions, and corresponding IAM Roles.
+test In this particular example we are deploying Amazon API Gateway, AWS StateMachine, AWS Lambda Functions, and corresponding IAM Roles.
 
 ## How it Works
 
